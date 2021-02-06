@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Setting {
 
-    @Value("${test.my.value:value1}")
+    @Value("${test.my.value}")
     private String value;
 
     public String getValue() {

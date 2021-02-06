@@ -15,20 +15,27 @@ public class MessageController {
 
     private final AtomicLong counterId = new AtomicLong();
 
+    private final MessageService messageService;
+
+    public MessageController(MessageService messageService) {
+        this.messageService = messageService;
+    }
+
     @PostMapping("/message")
     public ResponseEntity<Long> saveMessage(@RequestBody Message message) {
         logger.info(message.getText());
         if ("".equals(message.getText())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<Long>(counterId.incrementAndGet(), HttpStatus.OK);
+        Long id = counterId.incrementAndGet();
+        messageService.saveMessage(id, message);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @GetMapping("/message/{id}")
-    public ResponseEntity<Message> getMessage(@PathVariable String id) {
-        Message message = new Message();
-        message.setText(id);
-        return new ResponseEntity<Message>(message, HttpStatus.OK);
+    public ResponseEntity<Message> getMessage(@PathVariable Long id) {
+        Message message = messageService.getMessage(id);
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 }
